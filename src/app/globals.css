@@ -55,11 +55,66 @@
   }
   body {
     @apply bg-background text-foreground;
+    /* 防止移动端过度缩放 */
+    -webkit-text-size-adjust: 100%;
+    -ms-text-size-adjust: 100%;
+    /* 优化移动端触摸滚动 */
+    -webkit-overflow-scrolling: touch;
+    /* 移动端优化 */
+    touch-action: manipulation;
+  }
+  
+  /* 移动端输入框优化 */
+  input[type="text"], 
+  input[type="password"], 
+  input[type="email"], 
+  input[type="number"], 
+  textarea {
+    /* 防止移动端自动缩放 */
+    font-size: 16px;
+  }
+  
+  /* 移动端按钮优化 */
+  button {
+    /* 改善移动端点击体验 */
+    -webkit-tap-highlight-color: transparent;
+    touch-action: manipulation;
+  }
+  
+  /* 移动端滑块优化 */
+  input[type="range"] {
+    -webkit-appearance: none;
+    touch-action: manipulation;
+  }
+  
+  /* 改善小屏幕上的可读性 */
+  @media (max-width: 640px) {
+    html {
+      font-size: 14px;
+    }
   }
 }
 
 @layer utilities {
   .text-balance {
     text-wrap: balance;
+  }
+  
+  /* 移动端专用工具类 */
+  .touch-none {
+    touch-action: none;
+  }
+  
+  .touch-manipulation {
+    touch-action: manipulation;
+  }
+  
+  /* 安全区域支持 */
+  .safe-area-top {
+    padding-top: env(safe-area-inset-top);
+  }
+  
+  .safe-area-bottom {
+    padding-bottom: env(safe-area-inset-bottom);
   }
 }

@@ -59,12 +59,33 @@ export function PasswordGenerator() {
         setTimeout(() => setCopied(false), 2000)
       } catch (err) {
         console.error("复制失败:", err)
-        toast({
-          title: "❌ 复制失败",
-          description: "无法复制密码到剪贴板",
-          variant: "destructive",
-          duration: 3000,
-        })
+        // 移动端备用复制方法
+        try {
+          const textArea = document.createElement('textarea')
+          textArea.value = password
+          textArea.style.position = 'fixed'
+          textArea.style.left = '-999999px'
+          textArea.style.top = '-999999px'
+          document.body.appendChild(textArea)
+          textArea.focus()
+          textArea.select()
+          document.execCommand('copy')
+          document.body.removeChild(textArea)
+          setCopied(true)
+          toast({
+            title: "✅ 复制成功",
+            description: "密码已复制到剪贴板",
+            duration: 3000,
+          })
+          setTimeout(() => setCopied(false), 2000)
+        } catch (fallbackErr) {
+          toast({
+            title: "❌ 复制失败",
+            description: "无法复制密码到剪贴板",
+            variant: "destructive",
+            duration: 3000,
+          })
+        }
       }
     }
   }
@@ -89,38 +110,39 @@ export function PasswordGenerator() {
   const strength = getPasswordStrength()
 
   return (
-    <Card className="w-full max-w-md mx-auto">
-      <CardHeader>
-        <CardTitle className="flex items-center gap-2">
+    <Card className="w-full">
+      <CardHeader className="pb-4">
+        <CardTitle className="flex items-center gap-2 text-lg sm:text-xl">
           🔐 密码生成器
         </CardTitle>
-        <CardDescription>
+        <CardDescription className="text-sm">
           生成安全、随机的密码
         </CardDescription>
       </CardHeader>
-      <CardContent className="space-y-6">
+      <CardContent className="space-y-4 sm:space-y-6">
         {/* 密码显示区域 */}
         <div className="space-y-2">
-          <Label htmlFor="password">生成的密码</Label>
+          <Label htmlFor="password" className="text-sm">生成的密码</Label>
           <div className="flex gap-2">
             <Input
               id="password"
               value={password}
               readOnly
               placeholder="点击生成按钮创建密码"
-              className="font-mono"
+              className="font-mono text-xs sm:text-sm"
             />
             <Button
               variant="outline"
               size="icon"
               onClick={copyToClipboard}
               disabled={!password}
+              className="shrink-0"
             >
               {copied ? <Check className="h-4 w-4" /> : <Copy className="h-4 w-4" />}
             </Button>
           </div>
           {password && (
-            <div className="flex items-center justify-between text-sm">
+            <div className="flex items-center justify-between text-xs sm:text-sm">
               <span>强度: <span className={strength.color}>{strength.strength}</span></span>
               <span>长度: {password.length}</span>
             </div>
@@ -129,7 +151,7 @@ export function PasswordGenerator() {
 
         {/* 密码长度滑块 */}
         <div className="space-y-2">
-          <Label>密码长度: {length[0]}</Label>
+          <Label className="text-sm">密码长度: {length[0]}</Label>
           <Slider
             value={length}
             onValueChange={setLength}
@@ -142,7 +164,7 @@ export function PasswordGenerator() {
 
         {/* 字符类型选项 */}
         <div className="space-y-3">
-          <Label>包含字符类型</Label>
+          <Label className="text-sm">包含字符类型</Label>
           <div className="space-y-2">
             <div className="flex items-center space-x-2">
               <Checkbox
@@ -150,7 +172,7 @@ export function PasswordGenerator() {
                 checked={includeUppercase}
                 onCheckedChange={(checked) => setIncludeUppercase(checked as boolean)}
               />
-              <Label htmlFor="uppercase">大写字母 (A-Z)</Label>
+              <Label htmlFor="uppercase" className="text-sm">大写字母 (A-Z)</Label>
             </div>
             <div className="flex items-center space-x-2">
               <Checkbox
@@ -158,7 +180,7 @@ export function PasswordGenerator() {
                 checked={includeLowercase}
                 onCheckedChange={(checked) => setIncludeLowercase(checked as boolean)}
               />
-              <Label htmlFor="lowercase">小写字母 (a-z)</Label>
+              <Label htmlFor="lowercase" className="text-sm">小写字母 (a-z)</Label>
             </div>
             <div className="flex items-center space-x-2">
               <Checkbox
@@ -166,7 +188,7 @@ export function PasswordGenerator() {
                 checked={includeNumbers}
                 onCheckedChange={(checked) => setIncludeNumbers(checked as boolean)}
               />
-              <Label htmlFor="numbers">数字 (0-9)</Label>
+              <Label htmlFor="numbers" className="text-sm">数字 (0-9)</Label>
             </div>
             <div className="flex items-center space-x-2">
               <Checkbox
@@ -174,7 +196,7 @@ export function PasswordGenerator() {
                 checked={includeSymbols}
                 onCheckedChange={(checked) => setIncludeSymbols(checked as boolean)}
               />
-              <Label htmlFor="symbols">特殊字符 (!@#$%^&*)</Label>
+              <Label htmlFor="symbols" className="text-sm">特殊字符 (!@#$%^&*)</Label>
             </div>
           </div>
         </div>
